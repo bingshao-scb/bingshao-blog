@@ -1,0 +1,43 @@
+server:
+  port: 7779
+
+spring:
+  application:
+    name: service-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+
+    gateway:
+      routes:
+        - id: service-auth
+          uri: lb://service-auth
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - RewritePath=/api/auth/(?<segment>/?.*),/$\{segment}
+
+        - id: service-admin
+          uri: lb://service-admin
+          predicates:
+            - Path=/api/admin/**
+          filters:
+            - RewritePath=/api/admin/(?<segment>/?.*),/$\{segment}
+
+        - id: service-third-part
+          uri: lb://service-third-part
+          predicates:
+            - Path=/api/third/**
+          filters:
+            - RewritePath=/api/third/(?<segment>/?.*),/$\{segment}
+
+        - id: service-blog
+          uri: lb://service-blog
+          predicates:
+            - Path=/api/blog/**
+          filters:
+            - RewritePath=/api/blog/(?<segment>/?.*),/$\{segment}
